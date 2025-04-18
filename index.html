@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>To-Do List Manager</title>
+</head>
+<body> 
+    <div class="stickers">
+        <div><img class="notebook" src="images/notebook.png"></div>
+        <div><img class="stickynote" src="images/stickynote.png"></div>
+    </div>
+   
+    <div class="div_all">
+        <p class="todolist_text">TO-DO LIST</p>
+        <p class="tagline_text">Lista Mo, Gawin Mo</p>
+        <div class="div_add">
+            <input id="user_input" type="text" placeholder="Enter a task">
+            <button id="add_btn">ADD</button>
+        </div>
+        <ul id="output_list"></ul>
+        <button id="clear_btn">CLEAR</button>
+    </div>
+
+</body>
+
+<script>
+    document.getElementById('add_btn').addEventListener('click', function(){
+        const input_text = document.getElementById('user_input').value.trim();
+
+        if(input_text !== ''){
+            const output = document.getElementById('output_list');
+
+            //NO DUPLICATE FUNCTION
+            const items = Array.from(output.children).map(item => {
+                const span = item.querySelector('span');
+                return span ? span.textContent.trim() : '';
+            });
+
+            if(!items.includes(input_text)){
+                const list_item = document.createElement('li');
+                
+                //ADD CHECKBOX
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.classList.add('task_checkbox');
+
+                //create span for task text
+                const task_text = document.createElement('span');
+                task_text.textContent = input_text;
+
+                //ADD CHECKBOX FUNCTION (underline text when checked)
+                checkbox.addEventListener('change', function(){
+                    if(checkbox.checked){
+                        task_text.style.color = 'grey';
+                        task_text.style.textDecoration = 'line-through';
+                    } else {
+                        task_text.style.color = 'whitesmoke';
+                        task_text.style.textDecoration = 'none';
+                    }
+                })
+
+                list_item.appendChild(checkbox);
+                list_item.appendChild(task_text);
+
+                //ADD EDIT BUTTON
+                const edit_btn = document.createElement('button');
+                edit_btn.textContent = "Edit";
+                edit_btn.classList.add('edit_btn');
+
+                //EDIT BUTTON FUNCTION
+                edit_btn.addEventListener('click', function(){
+                    const new_text = prompt("Edit your task:");
+                    const items = Array.from(output.children).map(item => {
+                        const span = item.querySelector('span');
+                        return span ? span.textContent.trim() : '';
+                    });
+
+                    if(new_text !== null && new_text.trim() !== ''){
+                        if(!items.includes(new_text.trim())){
+                            task_text.textContent = new_text.trim();
+                        } else {
+                            alert('Task already exists!');
+                        }
+                    }
+                })
+
+                //ADD DELETE BUTTON
+                const delete_btn = document.createElement('button');
+                delete_btn.textContent = 'X';
+                delete_btn.classList.add('delete_btn');
+
+                //DELETE BUTTON FUNCTION
+                delete_btn.addEventListener('click', function(){
+                    const output = document.getElementById('output_list');
+                    output.removeChild(list_item);
+                })
+
+                // 🔁 REPLACED: list_item.appendChild(edit_btn); list_item.appendChild(delete_btn);
+                // ⬇️ NEW: Wrap buttons in a group container so they stay aligned right
+                const btn_group = document.createElement('div');
+                btn_group.classList.add('btn_group');
+                btn_group.appendChild(edit_btn);
+                btn_group.appendChild(delete_btn);
+                list_item.appendChild(btn_group);
+
+                document.getElementById('output_list').appendChild(list_item);
+            } else {
+                alert('Task already exists!');
+            }
+
+            document.getElementById('user_input').value = '';
+        }
+    })
+
+    document.getElementById('clear_btn').addEventListener('click', function(){
+        const output = document.getElementById('output_list');
+        output.innerHTML = '';
+    })
+</script>
+</html>
